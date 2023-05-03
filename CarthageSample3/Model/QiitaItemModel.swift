@@ -15,6 +15,7 @@ struct QiitaItemModel: Codable {
         case urlStr = "url"
         case title = "title"
     }
+    // string型からURL型にしてる
     var url: URL? { URL.init(string: urlStr)}
 }
 

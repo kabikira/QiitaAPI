@@ -85,7 +85,7 @@ final class API {
             URLParameterName.clientSecret.rawValue: clientSecret,
             URLParameterName.code.rawValue: code
         ]
-
+        // parametersメソッドとencoding: JSONEncoding.defaultにするとHTTPボディになる
         AF.request(url, method: .post, parameters: params, encoding: JSONEncoding.default).responseData { (response) in
             do {
                 guard let data = response.data else {
@@ -118,7 +118,7 @@ final class API {
             "page": 1,
             "per_page": 20
         ]
-
+        // ページネイションのパラメーターはボディになっていない　URLクエリパラメータ
         AF.request(url, method: .get, parameters: parameters, headers: headers).responseData { (response) in
             do {
                 guard
