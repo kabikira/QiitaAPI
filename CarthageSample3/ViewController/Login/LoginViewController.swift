@@ -42,6 +42,13 @@ class LoginViewController: UIViewController {
 
   private extension LoginViewController {
     @objc func tapLoginButton() {
-      UIApplication.shared.open(API.shared.oAuthURL, options: [:], completionHandler: nil)
+        // ユーザーデフォルトに値がある時の処理
+//        if UserDefaults.standard.qiitaAccessToken != "" {
+//            let vc = UIStoryboard.init(name: "Items", bundle: nil).instantiateInitialViewController()!
+//            self.navigationController?.pushViewController(vc, animated: true)
+//        } else {
+//            UIApplication.shared.open(API.shared.oAuthURL, options: [:], completionHandler: nil)
+//        }
+        UIApplication.shared.open(API.shared.oAuthURL, options: [:], completionHandler: nil)
     }
   }

@@ -46,32 +46,61 @@ final class API {
                     "\(URLParameterName.state.rawValue)=\(qiitState)")!
     }
 
+//    func postAccessToken(code: String, completion: ((Result<QiitaAccessTokenModel, Error>) -> Void)? = nil) {
+//        let endPoint = "/access_tokens"
+//        // ここがQiitaのドキュメントとちがうURLクエリストリングで送ってる
+//        // HTTPボディで送らないといけない
+//        guard let url = URL(string: host + endPoint + "?" +
+//                                "\(URLParameterName.clientID.rawValue)=\(clientID)" + "&" +
+//                                "\(URLParameterName.clientSecret.rawValue)=\(clientSecret)" + "&" +
+//                                "\(URLParameterName.code)=\(code)") else {
+//            completion?(.failure(APIError.postAccessToken))
+//            return
+//        }
+//
+//        AF.request(url, method: .post).responseData { (response) in
+//            do {
+//                guard
+//                    let _data = response.data else {
+//                    completion?(.failure(APIError.postAccessToken))
+//                    return
+//                }
+//                let accessToken = try API.jsonDecoder.decode(QiitaAccessTokenModel.self, from: _data)
+//                completion?(.success(accessToken))
+//            } catch let error {
+//                completion?(.failure(error))
+//            }
+//        }
+//    }
+    // HTTPボディでJSON形式で返す
     func postAccessToken(code: String, completion: ((Result<QiitaAccessTokenModel, Error>) -> Void)? = nil) {
         let endPoint = "/access_tokens"
-        // ここがQiitaのドキュメントとちがうURLクエリストリングで送ってる
-        // HTTPボディで送らないといけない
-        guard let url = URL(string: host + endPoint + "?" +
-                                "\(URLParameterName.clientID.rawValue)=\(clientID)" + "&" +
-                                "\(URLParameterName.clientSecret.rawValue)=\(clientSecret)" + "&" +
-                                "\(URLParameterName.code)=\(code)") else {
+        guard let url = URL(string: host + endPoint) else {
             completion?(.failure(APIError.postAccessToken))
             return
         }
+        // encodingしてるからswiftの書き方でOKなのか
+        let params = [
+            URLParameterName.clientID.rawValue: clientID,
+            URLParameterName.clientSecret.rawValue: clientSecret,
+            URLParameterName.code.rawValue: code
+        ]
 
-        AF.request(url, method: .post).responseData { (response) in
+        AF.request(url, method: .post, parameters: params, encoding: JSONEncoding.default).responseData { (response) in
             do {
-                guard
-                    let _data = response.data else {
+                guard let data = response.data else {
                     completion?(.failure(APIError.postAccessToken))
                     return
                 }
-                let accessToken = try API.jsonDecoder.decode(QiitaAccessTokenModel.self, from: _data)
+                let accessToken = try API.jsonDecoder.decode(QiitaAccessTokenModel.self, from: data)
+                print(params)
                 completion?(.success(accessToken))
             } catch let error {
                 completion?(.failure(error))
             }
         }
     }
+
 
     func getItems(completion: ((Result<[QiitaItemModel], Error>) -> Void)? = nil) {
         let endPoint = "/authenticated_user/items"
